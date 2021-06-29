@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+
+<!-- 헤더 -->
+<!-- 부트스트랩 ,제이쿼리, 폰트어섬 등 -->
+<head>
+    <!-- Bootstrap include -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- fontawsome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/v4-shims.css">
+
+    <!-- jquery 버전 유의 -->
+    <!-- slim/jquery, 3.1.0 윗 버전에서 ajax가 작동하지 않는 오류 확인 -->
+    <!-- Bootstrap의 CDN을 copy&paste 하되 Line 8의 버전만 3.1.0으로 수정하세요 -->
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0">
+</head>
+<!-- 바디 
+    제목
+    기능4 
+    1. 메이트 추가 - 아이디, 버튼, 결과영역
+    2. 프로젝트 점수추가 - 아이디, 프로젝트 이름, 점수, 버튼, 결과영역
+    3. 메이트 조회 - 아이디, 버튼, (테이블)
+    4. 메이트 이력 조회 - 아이디, 버튼, 결과영역-->
+<body>
+    <div class="container">
+        <i class="fas fa-id-card-alt" style="font-size: 150px;color:gainsboro"></i>
+        <h1> TEAMATE<br>프로토타입 </h1>
+        <hr>
+        <!-- 메이트 추가 영역 -->
+        <div class="row justify-content-md-center">
+            <div class="col-lg">
+                <!-- 결과 알림 -->
+                <div id="new-alert"></div>
+                <!-- 사용자 폼 영역-->
+                <h3>새 메이트를 추가합니다</h3>
+                <input type="text" id="new-id" name="id" placeholder="ID입력"> <br>
+                <!-- 버튼 영역-->
+                <button class="btn btn-primary" id="new-btn">추가하기</button>
+            </div>   
+        </div>
+        <br><br>
+        <div class="row justify-content-md-center">
+            <div class="col-lg">
+                <!-- 결과 알림 -->
+                <div id="query-alert"></div>
+                <!-- 사용자 폼 영역-->
+                <h3>메이트를 조회합니다</h3>
+                <input type="text" id="query-id" name="id" placeholder="ID입력"> <br>
+                <!-- 버튼 영역-->
+                <button class="btn btn-primary" id="query-btn">조회하기</button>
+                
+                <table class="table">
+                    <tbody id="table">
+                    </tbody>
+                </table>
+            </div>   
+        </div>
+        <br><br>
+        <div class="row justify-content-md-center">
+            <div class="col-lg">
+                <!-- 결과 알림 -->
+                <div id="join-alert"></div>
+                <!-- 사용자 폼 영역-->
+                <h3>프로젝트에 착수합니다</h3>
+                <input type="text" id="join-id" name="id" placeholder="ID입력"> <br>
+                <input type="text" id="join-name" name="name" placeholder="프로젝트 이름 입력"> <br>
+                <!-- 버튼 영역-->
+                <button class="btn btn-primary" id="join-btn">착수하기</button>
+            </div>   
+        </div>
+    </div>
+</body>
+<script>
+// 4개의 스크립트
+//     1. 메이트 추가 버튼 온클릭        = 서버에게 /mate POST id -> 결과는 JSON처리해서 결과영역에 업데이트
+$("#new-btn").click(()=>{
+    // new-email이라는 id값을 가지고 있는 input의 value를 가지고 옴
+    const value = $("#new-id").val();
+    const url = "/mate"
+
+    // email이라는 파라메터에 위의 value를 넣음
+    $.post(url, {id: value}, (data, status)=>{   //타입이 있으면 변수목록에 추가
+        // http 상태 코드가 200(success)이라면
+        if(status == "success"){
+            // 성공했다는 alert창을 띄움
+            // var obj = JSON.parse(data);
+            // if (obj.result == "success"){
+            //     // 성공을 알람영역에
+            // }else {
+            //     //오류를 알림영역에
+            // }
+            $('#new-alert').append("<div id='success' class='alert alert-success'>추가를 성공했습니다!</div>");
+            $('#new-alert').fadeIn(500);
+            $('#new-alert').fadeOut(5000);
+        }
+    })
+
+})
+//     2. 프로젝트 점수 추가 버튼 온클릭 = 서버에게 /score POST id, pname, score -> ''
+//     3. 조회 => /mate GET id type1 
+$("#query-btn").click(()=>{
+    // new-email이라는 id값을 가지고 있는 input의 value를 가지고 옴
+    const value = $("#query-id").val();
+    const url = "/mate"
+
+    // email이라는 파라메터에 위의 value를 넣음
+    $.get(url, {id: value}, (data)=>{   //타입이 있으면 변수목록에 추가
+        // http 상태 코드가 200(success)이라면
+        if(status != null){
+            $('#query-alert').append("<div id='query success' class='alert query-success'>조회를 성공했습니다!</div>");
+            $('#query-alert').fadeOut(500);
+            $('#query-alert').fadeOut(5000);
+            // stringify는 json객체를 string으로, parse는 string을 json객체로 변환 시켜줌
+            alert(data);
+            const parsedData= JSON.parse(data);
+            console.log(parsedData.id);
+
+            $('#table').empty();
+            /*
+                            ID                  string  `json:"id"`
+                            Avg                 float32 `json:"avg"`
+                            NumberOfProject     int     `json:"numproject"`
+                            CurrentState        int     `json:"state"`
+                            CurrentProject      string  `json:"pname"`
+                            CurrentProjectScore int     `json:"pscore"`
+            */
+            $('#table').append("<tr><th scope='row'>ID</th><td>" + parsedData.id + "</td></tr>")
+            $('#table').append("<tr><th scope='row'>Avg</th><td>" + parsedData.avg + "</td></tr>")
+            $('#table').append("<tr><th scope='row'>NumProject</th><td>" + parsedData.numproject + "</td></tr>")
+            $('#table').append("<tr><th scope='row'>CurrentState</th><td>" + parsedData.state + "</td></tr>")
+            $('#table').append("<tr><th scope='row'>CurrentProject</th><td>" + parsedData.pname + "</td></tr>")
+            $('#table').append("<tr><th scope='row'>CurrentProjectScore</th><td>" + parsedData.pscore + "</td></tr>")
+        }
+    })
+
+})
+$("#join-btn").click(()=>{
+    // new-email이라는 id값을 가지고 있는 input의 value를 가지고 옴
+    const valueId = $("#join-id").val();
+    const valueName = $("#join-name").val();
+    const url = "/join"
+    console.log("id : " + valueId);
+    console.log("name : " + valueName);
+    // email이라는 파라메터에 위의 value를 넣음
+    $.post(url, {id: valueId, name: valueName }, (data, status)=>{   //타입이 있으면 변수목록에 추가
+        // http 상태 코드가 200(success)이라면
+        if(status == "success"){
+            // 성공했다는 alert창을 띄움
+            // var obj = JSON.parse(data);
+            // if (obj.result == "success"){
+            //     // 성공을 알람영역에
+            // }else {
+            //     //오류를 알림영역에
+            // }
+            $('#join-alert').append("<div id='join success' class='alert join-success'>프로젝트에 착수했습니다!</div>");
+            $('#join-alert').fadeIn(500);
+            $('#join-alert').fadeOut(5000);
+        }
+    })
+
+})
+//     4. 이력 조회            +type2
+</script>
+</html>
